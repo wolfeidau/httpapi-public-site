@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: login server REST API.
+
+Parameters:
+  StaxStage:
+    Type: String
+    Description: The stage of development, e.g., dev, test, prod.
+    Default: dev
+  StaxBranch:
+    Type: String
+    Description: The branch used to deploy.
+    Default: master
+
+Globals:
+  Function:
+    Runtime: go1.x
+    Timeout: 30
+    MemorySize: 256
+    Environment:
+      Variables:
+        STAGE: !Ref StaxStage
+        BRANCH: !Ref StaxBranch
+
+Resources:
+
+  LoginHTTPAPI:
+    Type: AWS::Serverless::HttpApi
+
+  LoginAPIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../handler.zip
+      Handler: login-server-httpapi
+      Events:
+        ApiCall:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref LoginHTTPAPI
+
+Outputs:
+  LoginHTTPAPIEndpoint:
+    Description: The API Gateway endpoint address of the login REST API.
+    Value: !Sub "https://${LoginHTTPAPI}.execute-api.${AWS::Region}.amazonaws.com"
