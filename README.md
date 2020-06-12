@@ -22,7 +22,7 @@ aws s3 mb $S3_BUCKET
 To deploy run.
 
 ```
-make clean build package deploy
+make
 ```
 
 # License

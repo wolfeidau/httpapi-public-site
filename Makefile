@@ -1,9 +1,9 @@
-GOLANGCI_VERSION = 1.21.0
+GOLANGCI_VERSION = 1.27.0
 
 STAGE ?= dev
 BRANCH ?= master
 
-default: generate lint test build bundle ##=> Run all default targets
+default: generate lint test build bundle package deploy ##=> Run all default targets
 .PHONY: default
 
 ci: deps generate lint test ##=> Run all CI targets
