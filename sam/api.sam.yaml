@@ -3,11 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 Description: login server REST API.
 
 Parameters:
-  StaxStage:
+  Stage:
     Type: String
     Description: The stage of development, e.g., dev, test, prod.
     Default: dev
-  StaxBranch:
+  Branch:
     Type: String
     Description: The branch used to deploy.
     Default: master
@@ -19,8 +19,8 @@ Globals:
     MemorySize: 256
     Environment:
       Variables:
-        STAGE: !Ref StaxStage
-        BRANCH: !Ref StaxBranch
+        STAGE: !Ref Stage
+        BRANCH: !Ref Branch
 
 Resources:
 

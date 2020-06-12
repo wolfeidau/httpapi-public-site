@@ -4,3 +4,4 @@ bin
 
 /dist
 /handler.zip
+/*.out.yaml

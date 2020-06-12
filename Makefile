@@ -1,5 +1,8 @@
 GOLANGCI_VERSION = 1.21.0
 
+STAGE ?= dev
+BRANCH ?= master
+
 default: generate lint test build bundle ##=> Run all default targets
 .PHONY: default
 
@@ -41,3 +44,25 @@ bundle: ##=> Build the bundle
 	@zip -r -q ./handler.zip public
 	@cd dist && zip -r -q ../handler.zip .
 .PHONY: bundle
+
+package:
+	@echo "--- package lambdas and upload to $(S3_BUCKET)"
+	@echo "Running as: $(shell aws sts get-caller-identity --query Arn --output text)"
+	@aws cloudformation package \
+		--template-file sam/api.sam.yaml \
+		--output-template-file api.out.yaml \
+		--s3-bucket $(S3_BUCKET) \
+		--s3-prefix sam
+.PHONY: package
+
+deploy:
+	@echo "--- deploy lambdas into aws"
+	@aws cloudformation deploy \
+		--no-fail-on-empty-changeset \
+		--template-file api.out.yaml \
+		--capabilities CAPABILITY_IAM \
+		--stack-name httpapi-public-site-$(STAGE)-$(BRANCH) \
+    --parameter-overrides \
+      Stage=$(STAGE) \
+			Branch=$(BRANCH)
+.PHONY: deploy
