@@ -3,6 +3,8 @@ GOLANGCI_VERSION = 1.27.0
 STAGE ?= dev
 BRANCH ?= master
 
+WATCH := (.go$$)|(.html$$)
+
 default: generate lint test build bundle package deploy ##=> Run all default targets
 .PHONY: default
 
@@ -19,6 +21,9 @@ bin/golangci-lint: bin/golangci-lint-${GOLANGCI_VERSION}
 bin/golangci-lint-${GOLANGCI_VERSION}:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | BINARY=golangci-lint bash -s -- v${GOLANGCI_VERSION}
 	@mv bin/golangci-lint $@
+
+bin/reflex:
+	env GOBIN=$(shell pwd)/bin GO111MODULE=on go install github.com/cespare/reflex
 
 lint: bin/golangci-lint ##=> Lint all the things
 	@echo "--- lint all the things"
@@ -66,3 +71,7 @@ deploy:
       Stage=$(STAGE) \
 			Branch=$(BRANCH)
 .PHONY: deploy
+
+watch: bin/reflex
+	@STAGE=local bin/reflex -R '^static/' -r "$(WATCH)" -s -- go run cmd/server-local/main.go
+.PHONY: watch
