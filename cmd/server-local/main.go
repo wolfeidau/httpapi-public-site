@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/labstack/echo/v4"
+	"log"
+
+	"github.com/wolfeidau/httpapi-public-site/internal/server"
 )
 
 func main() {
 
-	e := echo.New()
-	e.Static("/", "public")
+	e := server.Routes()
 
-	e.Start(":9000")
+	log.Fatal(e.Start(":9000"))
 }
